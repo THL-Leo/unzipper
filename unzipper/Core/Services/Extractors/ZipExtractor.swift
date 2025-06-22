@@ -5,7 +5,6 @@
 //  Created by Leo Lee on 6/20/25.
 //
 
-
 import Foundation
 
 // MARK: - ZIP Extractor
@@ -19,9 +18,12 @@ class ZipExtractor: ArchiveExtractor {
         // Validate source file
         try ArchiveDetector.validateArchiveFile(sourceURL)
         
-        // Create destination directory
+        // Find an available destination folder name if the target already exists
+        let finalDestinationURL = findAvailableDestinationFolder(originalURL: destinationURL)
+        
+        // Create the final destination directory
         try FileManager.default.createDirectory(
-            at: destinationURL,
+            at: finalDestinationURL,
             withIntermediateDirectories: true,
             attributes: nil
         )
@@ -30,10 +32,12 @@ class ZipExtractor: ArchiveExtractor {
         let fileList = try await listContents(of: sourceURL)
         let totalFiles = fileList.count
         
+        print("Extracting to: \(finalDestinationURL.path)")
+        
         // Use system unzip command for reliable extraction
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
-        task.arguments = ["-qq", sourceURL.path, "-d", destinationURL.path]
+        task.arguments = ["-qq", sourceURL.path, "-d", finalDestinationURL.path]
         
         // Set up progress monitoring
         var filesProcessed = 0
@@ -123,6 +127,29 @@ class ZipExtractor: ArchiveExtractor {
     
     // MARK: - Private Methods
     
+    private func findAvailableDestinationFolder(originalURL: URL) -> URL {
+        // If the folder doesn't exist, use the original name
+        if !FileManager.default.fileExists(atPath: originalURL.path) {
+            return originalURL
+        }
+        
+        // Find a numbered version
+        let parentDirectory = originalURL.deletingLastPathComponent()
+        let originalFolderName = originalURL.lastPathComponent
+        
+        var counter = 1
+        var newURL: URL
+        
+        repeat {
+            let newFolderName = "\(originalFolderName) (\(counter))"
+            newURL = parentDirectory.appendingPathComponent(newFolderName)
+            counter += 1
+        } while FileManager.default.fileExists(atPath: newURL.path)
+        
+        print("Destination folder exists, using: \(newURL.lastPathComponent)")
+        return newURL
+    }
+    
     private func parseUnzipListOutput(_ output: String) -> [String] {
         let lines = output.components(separatedBy: .newlines)
         var files: [String] = []
@@ -185,4 +212,3 @@ extension String {
         return self.range(of: pattern, options: .regularExpression) != nil
     }
 }
-
