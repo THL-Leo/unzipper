@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<dict>
+		<key>CFBundleDisplayName</key>
+		<string>unzipper</string>
+		<key>CFBundleIdentifier</key>
+		<string>com.TNBM.unzipper</string>
+		<key>CFBundleVersion</key>
+		<string>1.0</string>
+		<key>LSMinimumSystemVersion</key>
+		<string>13.0</string>
+		<key>CFBundleDocumentTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeExtensions</key>
+				<array>
+					<string>zip</string>
+					<string>tar</string>
+					<string>gz</string>
+					<string>tgz</string>
+					<string>tar.gz</string>
+					<string>tar.bz2</string>
+					<string>tbz2</string>
+					<string>tar.xz</string>
+					<string>txz</string>
+				</array>
+				<key>CFBundleTypeName</key>
+				<string>Archive Files</string>
+				<key>CFBundleTypeRole</key>
+				<string>Viewer</string>
+				<key>LSHandlerRank</key>
+				<string>Owner</string>
+			</dict>
+		</array>
+	</dict>
+</dict>
+</plist>
